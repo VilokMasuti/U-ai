@@ -1,15 +1,12 @@
 // Importing required components and hooks
 import { Card, CardBody } from '@heroui/react'; // Components for Card structure
-import dynamic from 'next/dynamic'; // Dynamic import for ReactQuill editor
-import { useEffect, useState } from 'react'; // React hooks for side effects and state management
+import React, { Suspense, useEffect, useState } from 'react';
 import 'react-quill/dist/quill.snow.css'; // Importing Quill editor's styling
 import { animated, useSpring } from 'react-spring'; // Animation utilities for spring animations
 
 // Dynamically import ReactQuill to avoid SSR issues (server-side rendering)
-const ReactQuill = dynamic(() => import('react-quill'), {
-  ssr: false, // Disables SSR for this component
-  loading: () => <p className="text-center text-gray-400">Loading editor...</p>, // Loader text while the editor is being loaded
-});
+// Lazy load the ReactQuill component
+const ReactQuill = React.lazy(() => import('react-quill'));
 
 // Define the UserData interface for the structure of the user data
 
@@ -76,21 +73,23 @@ export default function RichTextEditor() {
   }, []); // Runs only once to set up the event listener
 
   return (
-    <AnimatedCard
-      style={animation} // Applying the spring animation to the card
-      className=" h-[350px] w-full max-w-lg rounded-lg bg-opacity-10 border border-white/20 backdrop-blur-md "
-    >
-      <CardBody>
-        <div className="h-[350px]  [&_.ql-toolbar]:border-white/20 [&_.ql-container]:border-white/20 [&_.ql-editor]:text-white">
-          {/* React Quill editor with dynamic content */}
-          <ReactQuill
-            theme="snow" // Applying the 'snow' theme for the editor
-            value={content} // Binding content state to editor
-            onChange={setContent} // Updating content state on changes in editor
-            modules={modules} // Passing toolbar configuration
-          />
-        </div>
-      </CardBody>
-    </AnimatedCard>
+    <Suspense fallback={<div>Loading editor...</div>}>
+      <AnimatedCard
+        style={animation} // Applying the spring animation to the card
+        className=" h-[350px] w-full max-w-lg rounded-lg bg-opacity-10 border border-white/20 backdrop-blur-md "
+      >
+        <CardBody>
+          <div className="h-[350px]  [&_.ql-toolbar]:border-white/20 [&_.ql-container]:border-white/20 [&_.ql-editor]:text-white">
+            {/* React Quill editor with dynamic content */}
+            <ReactQuill
+              theme="snow" // Applying the 'snow' theme for the editor
+              value={content} // Binding content state to editor
+              onChange={setContent} // Updating content state on changes in editor
+              modules={modules} // Passing toolbar configuration
+            />
+          </div>
+        </CardBody>
+      </AnimatedCard>
+    </Suspense>
   );
 }
