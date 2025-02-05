@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
 // Importing required components and hooks
 import { Card, CardBody } from '@heroui/react'; // Components for Card structure
 import dynamic from 'next/dynamic'; // Dynamic import for ReactQuill editor
@@ -14,19 +12,12 @@ const ReactQuill = dynamic(() => import('react-quill'), {
 });
 
 // Define the UserData interface for the structure of the user data
-interface UserData {
-  id: string;
-  name: string;
-  address: string;
-  email: string;
-  phone: string;
-}
 
 // Animated Card using react-spring's animated component
 const AnimatedCard = animated(Card);
 
 // Main RichTextEditor component accepts user data as a prop
-export default function RichTextEditor({ userData }: { userData: UserData }) {
+export default function RichTextEditor() {
   const [content, setContent] = useState(''); // State to store editor content
 
   // Spring animation for card entrance (fade and slide effect)
